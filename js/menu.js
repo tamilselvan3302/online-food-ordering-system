@@ -65,6 +65,7 @@ const firebaseConfig = {
             
         }
     );
+    cartbuttonupdate()
    
 
         }); 
@@ -87,51 +88,20 @@ const firebaseConfig = {
                 button.addEventListener('click',addToCartClicked);
              }
         }
-          
+        
+
+        var user= "user1";
         async function addToCartClicked(e)
         {   
         
             console.log(e.target.parentElement.getElementsByTagName("h2")[0].innerText);
             var fooditem = e.target.parentElement.getElementsByTagName("h2")[0].innerText;
-             if(e.target.innerHTML== "Added To Cart")
-                e.target.innerHTML= "Add To Cart";
-            else
-                 e.target.innerHTML= "Added To Cart";
+            
 
             var idnoV, nameV,priceV,linkV;
-            var user= "user1";
+            
             var id=this.dataset.id;
-            var flag;
-
-
-
-
-            // firebase.database().ref('cart/'+user).once('value',function(snapshot){
-            //     snapshot.forEach(
-            //     function(ChildSnapshot){
-            //         console.log("condition",ChildSnapshot.val().name,fooditem,ChildSnapshot.val().name==fooditem);
-            //         if(ChildSnapshot.val().name == fooditem)
-            //             {   
-            //                 console.log("Item name",ChildSnapshot.val().name);
-            //                 console.log("This item is already added");
-            //                 flag=1;
-            //                 return;
-            //             }
-                    
-            //     });
-
-            //     if(flag==1)
-            //     {   
-            //         console.log("return",flag);
-            //         return;
-            //     }
-            // }
-            // );
-
-      
-
-
-
+            
 
             firebase.database().ref('food').once('value',function(snapshot){
                                 snapshot.forEach(
@@ -148,12 +118,7 @@ const firebaseConfig = {
                                         }
                                 });
 
-                                // firebase.database().ref('food').on('value',function(snapshot){
-                                //     count=snapshot.numChildren()
-                                //     console.log(snapshot.numChildren());
-                                    
-                                // });
-                            
+                                cartbuttonupdate()
                             }
                             
                             );
@@ -162,21 +127,12 @@ const firebaseConfig = {
                     async function addToCart(user,idnoV,nameV,priceV,linkV)
                     {   
                         
-                        // let data = await firebase.database().ref('cart/'+user).get();
-                        // var count = data.numChildren();
-                        // var count = count+1;
-
-
-                        // firebase.database().ref('cart/'+user).on('value',function(snapshot){
-                        //     count=snapshot.numChildren()
-                        //     console.log("count" +count);
-                            
-                        // });
                         firebase.database().ref('cart/'+user+'/'+ id).set({
                                     idno: idnoV,
                                     name: nameV,
                                     price: priceV,
-                                    Link : linkV
+                                    Link : linkV,
+                                    quantity:1
                                 },(error) => {
                                     if (error) {
                                         console.log("error",error)
@@ -189,3 +145,18 @@ const firebaseConfig = {
             
         }
             
+
+          
+    var i=0;
+    function cartbuttonupdate()
+    {        
+        firebase.database().ref('cart/'+user).once('value',function(snapshot){
+            snapshot.forEach(
+            function(ChildSnapshot){
+                let element=document.querySelector(`.cart[data-id="${ChildSnapshot.val().idno}"]`);
+                console.log(element);
+                element.innerHTML="Added";
+            });
+        } 
+        );
+    }
